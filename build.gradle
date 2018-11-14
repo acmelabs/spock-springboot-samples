@@ -1,44 +1,91 @@
 buildscript {
-	ext {
-		springBootVersion = '2.0.5.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '2.0.5.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 apply plugin: 'java'
+apply plugin: 'groovy'
 apply plugin: 'eclipse'
+apply plugin: 'jacoco'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+
+
+jacoco {
+    toolVersion = "0.7.6.201602180812"
+    reportsDir = file("$buildDir/jacocoReportDir")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled true
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
 
 group = 'spock-samples'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 
 ext {
-	springCloudVersion = 'Finchley.SR1'
+    springCloudVersion = 'Finchley.SR1'
 }
 
 dependencies {
-	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-	implementation('org.springframework.boot:spring-boot-starter-web')
-	implementation('org.springframework.cloud:spring-cloud-stream')
+    compile(
+            'org.springframework.boot:spring-boot-starter-web',
+            "org.springframework.cloud:spring-cloud-starter-stream-rabbit",
+            "org.springframework.boot:spring-boot-starter-data-jpa",
+            "org.springframework.boot:spring-boot-starter-amqp",
+            "org.springframework:spring-jms",
+            "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
+            "javax.jms:javax.jms-api:2.0.1",
+            "com.rabbitmq.jms:rabbitmq-jms:1.9.0",
+            "org.joda:joda-money:1.0.2-SNAPSHOT",
 
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testImplementation('org.springframework.cloud:spring-cloud-stream-test-support')
+            "org.springframework.cloud:spring-cloud-starter-stream-rabbit",
+            "org.springframework.boot:spring-boot-starter-data-jpa",
+            "org.springframework.boot:spring-boot-starter-amqp",
+            "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
+            "org.springframework:spring-jms",
+            "javax.jms:javax.jms-api:2.0.1",
+            "com.rabbitmq.jms:rabbitmq-jms:1.9.0",
+            "com.h2database:h2",
+            "io.springfox:springfox-swagger2:2.9.2",
+            "io.springfox:springfox-swagger-ui:2.9.2"
+    )
+
+    compileOnly("org.projectlombok:lombok:1.16.20")
+
+    testCompile(
+            'org.springframework.boot:spring-boot-starter-test',
+            'org.springframework.cloud:spring-cloud-stream-test-support',
+            "org.codehaus.groovy:groovy-all:2.4.11",
+            "org.spockframework:spock-core:1.1-groovy-2.4",
+            "org.spockframework:spock-spring:1.1-groovy-2.4",
+//            "com.athaydes:spock-reports:1.2.7",
+            "cglib:cglib-nodep:2.2",
+            "org.hamcrest:hamcrest-junit:2.0.0.0",
+            "junit:junit:4.12"
+    )
 }
 
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
