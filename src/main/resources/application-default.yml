@@ -1,0 +1,3 @@
+application.name: Spring Boot Tests
+
+server.port: 8668
